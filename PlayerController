@@ -37,6 +37,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Image pistolUI, rifleUI, miniGunUI, cursor;
     
     private int health; // la salud de personaje
+
+    [SerializeField] AudioSource characterSounds; // Hacemos referencia al AudioSource
+    [SerializeField] AudioClip jump; // Hacemos referencia al clip de sonido del salto
+
    
     void Start()
     {        
@@ -71,15 +75,22 @@ public class PlayerController : MonoBehaviour
         if(direction.x != 0 || direction.z != 0)
         {
             anim.SetBool("Run", true);
+            if(!characterSounds.isPlaying&& isGrounded)
+            {
+                characterSounds.Play();
+            }
         }
         if(direction.x == 0 && direction.z == 0)
         {
             anim.SetBool("Run", false);
+            characterSounds.Stop();
         }
         if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
             rb.AddForce(new Vector3(0, jumpForce, 0), ForceMode.Impulse);
             isGrounded = false;
+            characterSounds.Stop(); //se desactiva el sonido de correr
+            AudioSource.PlayClipAtPoint(jump, transform.position);
             anim.SetBool("Jump", true);
         }
         if(Input.GetKey(KeyCode.LeftShift))
